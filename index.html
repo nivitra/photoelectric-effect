@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Photoelectric Effect Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="simulator-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Enhanced Photoelectric Effect Simulator</h1>
+            <p>High-precision quantum physics experimentation with advanced data analysis</p>
+        </div>
+
+        <!-- Main content area -->
+        <div class="main-content">
+            <!-- Left Panel: Controls -->
+            <div class="left-panel">
+                <div class="card">
+                    <div class="card__body">
+                        <h3>Experimental Parameters</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Photocathode Material</label>
+                            <select id="materialSelect" class="form-control">
+                                <option value="">Select Material...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Wavelength (nm)</label>
+                            <input type="range" id="wavelengthSlider" class="slider" min="200" max="800" step="1" value="400">
+                            <div class="slider-display">
+                                <span id="wavelengthDisplay">400</span> nm
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Light Intensity (μW/cm²)</label>
+                            <input type="range" id="intensitySlider" class="slider" min="0.1" max="20" step="0.1" value="5.0">
+                            <div class="slider-display">
+                                <span id="intensityDisplay">5.0</span> μW/cm²
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Applied Voltage (V)</label>
+                            <input type="range" id="voltageSlider" class="slider" min="-3" max="2" step="0.01" value="0">
+                            <div class="slider-display">
+                                <span id="voltageDisplay">0.00</span> V
+                            </div>
+                        </div>
+
+                        <div class="measurement-controls">
+                            <h4>Measurement Protocol</h4>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Measurement Rounds</label>
+                                <select id="measurementRounds" class="form-control">
+                                    <option value="5">5 readings</option>
+                                    <option value="10" selected>10 readings</option>
+                                    <option value="20">20 readings</option>
+                                    <option value="50">50 readings</option>
+                                </select>
+                            </div>
+
+                            <button id="singleMeasurement" class="btn btn--primary btn--full-width">Single Measurement</button>
+                            <button id="voltageSeep" class="btn btn--secondary btn--full-width">Voltage Sweep</button>
+                            <button id="clearData" class="btn btn--outline btn--full-width">Clear Data</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Measurement Display -->
+                <div class="card">
+                    <div class="card__body">
+                        <h4>Current Measurement</h4>
+                        <div class="measurement-display">
+                            <div class="digital-display">
+                                <div class="display-label">Photocurrent</div>
+                                <div class="display-value" id="currentDisplay">0.000000</div>
+                                <div class="display-unit">nA</div>
+                            </div>
+                            <div class="digital-display">
+                                <div class="display-label">Standard Error</div>
+                                <div class="display-value" id="errorDisplay">0.000000</div>
+                                <div class="display-unit">nA</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel: Visual Setup -->
+            <div class="center-panel">
+                <div class="card">
+                    <div class="card__body">
+                        <h3>Experimental Setup</h3>
+                        <div class="experimental-setup">
+                            <div class="photon-beam" id="photonBeam">
+                                <div class="photon-particles"></div>
+                            </div>
+                            <div class="photocathode">
+                                <div class="cathode-label">Photocathode</div>
+                                <div class="material-info" id="materialInfo">Select Material</div>
+                            </div>
+                            <div class="electron-flow" id="electronFlow"></div>
+                            <div class="collector">
+                                <div class="collector-label">Collector</div>
+                            </div>
+                        </div>
+                        
+                        <div class="physics-display">
+                            <h4>Physics Parameters</h4>
+                            <div class="physics-grid">
+                                <div class="physics-item">
+                                    <span class="label">Photon Energy:</span>
+                                    <span class="value" id="photonEnergy">0.000</span>
+                                    <span class="unit">eV</span>
+                                </div>
+                                <div class="physics-item">
+                                    <span class="label">Work Function:</span>
+                                    <span class="value" id="workFunction">0.00</span>
+                                    <span class="unit">eV</span>
+                                </div>
+                                <div class="physics-item">
+                                    <span class="label">Max KE:</span>
+                                    <span class="value" id="maxKineticEnergy">0.000</span>
+                                    <span class="unit">eV</span>
+                                </div>
+                                <div class="physics-item">
+                                    <span class="label">Stopping Potential:</span>
+                                    <span class="value" id="stoppingPotential">0.000</span>
+                                    <span class="unit">V</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Graph and Analysis -->
+            <div class="right-panel">
+                <div class="card">
+                    <div class="card__body">
+                        <div class="graph-header">
+                            <h3>I-V Characteristic Analysis</h3>
+                            <button id="exportData" class="btn btn--sm btn--outline">Export Data</button>
+                        </div>
+                        <div id="plotContainer" class="plot-container"></div>
+                        
+                        <div class="analysis-stats">
+                            <h4>Statistical Analysis</h4>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Data Points:</span>
+                                    <span class="stat-value" id="dataPointsCount">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Threshold Voltage:</span>
+                                    <span class="stat-value" id="thresholdVoltage">N/A</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">R² Correlation:</span>
+                                    <span class="stat-value" id="correlation">N/A</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Noise Level:</span>
+                                    <span class="stat-value" id="noiseLevel">0.05</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress indicator for sweeps -->
+        <div id="progressIndicator" class="progress-indicator hidden">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Measuring...</div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
